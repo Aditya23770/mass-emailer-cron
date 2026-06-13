@@ -1,0 +1,18 @@
+Dear {name},
+
+I'm a recent graduate passionate about building real-world AI systems. I'm writing to express strong interest in an AI/ML or Data Science role at {company}.
+
+I've:
+- Built an Agentic AI document intelligence system using GPT-4, LangChain, and FAISS.
+- Developed a full-stack LLM SQL chatbot with FastAPI and ReactJS.
+- Automated reporting dashboards, cutting manual effort by 50%.
+
+Proficient in Python, SQL, LangChain, and scikit-learn, I'm eager to apply my skills to drive impact at {company}.
+
+Find my CV attached. I'd love the chance to contribute to your team.
+
+Best regards,
+{sender_name}
+{sender_phone}
+LinkedIn: {sender_linkedin}
+GitHub: {sender_github}

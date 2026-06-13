@@ -1,0 +1,20 @@
+Dear {name},
+
+In my previous role, I automated a reporting pipeline that cut executive workload by 50% using Python and Pandas. This reflects my strength in building scalable, data-driven solutions.
+
+I'm a graduate with a strong focus on applied AI. My projects include an agentic AI for document summarization and a natural language to SQL chatbot powered by Llama 3.
+
+I'm seeking roles as a:
+- Data Scientist
+- ML Engineer
+- AI Developer
+
+I admire {company}'s innovation and believe my experience with LangChain, GPT-4, and Streamlit aligns well with your goals.
+
+My CV is attached. I'm open to connecting and relocating across India.
+
+Best regards,
+{sender_name}
+{sender_phone}
+LinkedIn: {sender_linkedin}
+GitHub: {sender_github}

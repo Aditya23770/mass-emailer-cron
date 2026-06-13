@@ -1,0 +1,15 @@
+Dear {name},
+
+I'm a graduate with hands-on experience in AI, ML, LLMs, and Data engineering. I've worked extensively with Python, GPT-4, LangChain, FAISS, Scikit-learn, SQL, and Streamlit, applying these tools to build Agentic AI systems, RAG systems, predictive models, and end-to-end data pipelines.
+
+I'm actively seeking roles like:
+- Data Scientist
+- ML Engineer
+- AI Developer
+
+I'm excited about your work at {company} and would love to contribute. I am willing to relocate anywhere in India. Please find my CV attached.
+
+Best regards,
+{sender_name}
+{sender_phone}
+LinkedIn: {sender_linkedin}

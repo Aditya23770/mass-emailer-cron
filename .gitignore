@@ -1,0 +1,30 @@
+# Secrets and personal config — never commit these
+.env
+config.json
+
+# Resume / CV files — never commit personal PDFs
+*.pdf
+!example_resume.pdf
+
+# Data files with personal/contact info
+filtered_contacts.csv
+sent_contacts.csv
+email_log.txt
+
+# Runtime state files
+jobs.json
+status.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Tool-specific
+.code-review-graph/
+.mcp.json
+.claude/
+
+# Local setup guide (not for public repo)
+setup.md
+

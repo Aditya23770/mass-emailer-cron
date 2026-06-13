@@ -1,0 +1,16 @@
+{
+  "csv_file": "filtered_contacts.csv",
+  "sent_file": "sent_contacts.csv",
+  "pdf_attachment": "example_resume.pdf",
+  "log_file": "email_log.txt",
+  "template_files": ["template_1.txt", "template_2.txt", "template_3.txt"],
+  "subjects": [
+    "Application for AI/ML/Data Roles at {company}",
+    "Interested in AI/ML opportunities at {company}",
+    "Exploring Data Science roles at {company}"
+  ],
+  "test_contacts": [
+    {"email": "test1@gmail.com", "name": "Test Recruiter One", "company": "Test Company A"},
+    {"email": "test2@gmail.com", "name": "Test Recruiter Two", "company": "Test Company B"}
+  ]
+}

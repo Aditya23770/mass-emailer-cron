@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cold Email Sender</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 520px;
+    }
+    h1 { font-size: 1.5rem; color: #1a1a2e; margin-bottom: 1.5rem; }
+
+    .status-box {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .status-running { background: #eff6ff; border: 1px solid #3b82f6; color: #1d4ed8; }
+    .status-done    { background: #f0fdf4; border: 1px solid #22c55e; color: #166534; }
+    .status-error   { background: #fef2f2; border: 1px solid #ef4444; color: #991b1b; }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid #93c5fd;
+      border-top-color: #1d4ed8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      cursor: pointer;
+    }
+    .toggle-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+    .toggle-row label { font-weight: 600; cursor: pointer; color: #333; }
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 0.35rem; }
+    .field input, .field select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+    }
+    .field input:disabled, .field select:disabled { background: #f3f4f6; cursor: not-allowed; }
+    .divider { border: none; border-top: 1px solid #e5e7eb; margin: 1.25rem 0; }
+    .test-preset { margin-bottom: 1rem; }
+    .test-preset label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 0.35rem; }
+    .test-preset select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 0.95rem;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.75rem;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+    button[type="submit"]:hover { background: #4338ca; }
+    button[type="submit"]:disabled { background: #a5b4fc; cursor: not-allowed; }
+    .footer-link { text-align: center; margin-top: 1.25rem; }
+    .footer-link a { color: #4f46e5; text-decoration: none; font-size: 0.9rem; }
+    .footer-link a:hover { text-decoration: underline; }
+    #test-fields { display: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>Cold Email Sender</h1>
+
+  <div id="status-box" class="status-box" style="display:none"></div>
+
+  {% if status and status.message %}
+    {% if status.running %}
+    <script>var initialRunning = true;</script>
+    {% else %}
+    <script>var initialRunning = false;</script>
+    {% endif %}
+  {% else %}
+    <script>var initialRunning = false;</script>
+  {% endif %}
+
+  <form method="POST" id="main-form">
+    <div class="toggle-row">
+      <input type="checkbox" name="test_mode" id="test_mode" onchange="toggleMode(this)" {% if blocked %}disabled{% endif %}>
+      <label for="test_mode">Test Mode</label>
+    </div>
+
+    <div id="normal-fields">
+      <div class="field">
+        <label for="num_to_send">Number of emails to send</label>
+        <input type="number" id="num_to_send" name="num_to_send" value="10" min="1" required {% if blocked %}disabled{% endif %}>
+      </div>
+      <div class="field">
+        <label for="delay_seconds">Delay between emails (seconds)</label>
+        <input type="number" id="delay_seconds" name="delay_seconds" value="30" min="0" required {% if blocked %}disabled{% endif %}>
+      </div>
+    </div>
+
+    <div id="test-fields">
+      <hr class="divider">
+      {% if test_contacts %}
+      <div class="test-preset">
+        <label for="preset">Quick-pick a test contact</label>
+        <select id="preset" onchange="applyPreset(this)" {% if blocked %}disabled{% endif %}>
+          <option value="">— type manually below —</option>
+          {% for c in test_contacts %}
+          <option value="{{ c.email }}" data-name="{{ c.name }}" data-company="{{ c.company }}">
+            {{ c.name }} &lt;{{ c.email }}&gt;
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="field">
+        <label for="test_email">Test email address</label>
+        <input type="email" id="test_email" name="test_email" placeholder="you@example.com" {% if blocked %}disabled{% endif %}>
+      </div>
+      <div class="field">
+        <label for="test_name">Test name</label>
+        <input type="text" id="test_name" name="test_name" value="Test Person" {% if blocked %}disabled{% endif %}>
+      </div>
+      <div class="field">
+        <label for="test_company">Test company</label>
+        <input type="text" id="test_company" name="test_company" value="Test Company" {% if blocked %}disabled{% endif %}>
+      </div>
+      <div class="field">
+        <label for="template_index">Email template</label>
+        <select id="template_index" name="template_index" {% if blocked %}disabled{% endif %}>
+          <option value="0">Template 1</option>
+          <option value="1">Template 2</option>
+          <option value="2">Template 3</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" id="submit-btn" {% if blocked %}disabled{% endif %}>
+      {% if blocked %}Running...{% else %}Send Now{% endif %}
+    </button>
+  </form>
+
+  <div class="footer-link">
+    <a href="/logs">View email logs &rarr;</a>
+  </div>
+</div>
+
+<script>
+  function toggleMode(checkbox) {
+    var normalFields = document.getElementById('normal-fields');
+    var testFields   = document.getElementById('test-fields');
+    if (checkbox.checked) {
+      normalFields.style.display = 'none';
+      testFields.style.display   = 'block';
+      document.getElementById('num_to_send').removeAttribute('required');
+      document.getElementById('test_email').setAttribute('required', '');
+    } else {
+      normalFields.style.display = 'block';
+      testFields.style.display   = 'none';
+      document.getElementById('num_to_send').setAttribute('required', '');
+      document.getElementById('test_email').removeAttribute('required');
+    }
+  }
+
+  function applyPreset(select) {
+    var opt = select.options[select.selectedIndex];
+    if (!opt.value) return;
+    document.getElementById('test_email').value   = opt.value;
+    document.getElementById('test_name').value    = opt.dataset.name    || '';
+    document.getElementById('test_company').value = opt.dataset.company || '';
+  }
+
+  function setStatus(running, message) {
+    var box = document.getElementById('status-box');
+    var btn = document.getElementById('submit-btn');
+    if (!message) { box.style.display = 'none'; return; }
+
+    box.style.display = 'flex';
+    if (running) {
+      box.className = 'status-box status-running';
+      box.innerHTML = '<div class="spinner"></div><span>' + message + '</span>';
+      btn.disabled  = true;
+      btn.textContent = 'Running...';
+    } else if (message.startsWith('Error')) {
+      box.className = 'status-box status-error';
+      box.innerHTML = '<span>&#10060; ' + message + '</span>';
+      btn.disabled  = false;
+      btn.textContent = 'Send Now';
+    } else {
+      box.className = 'status-box status-done';
+      box.innerHTML = '<span>&#10003; ' + message + '</span>';
+      btn.disabled  = false;
+      btn.textContent = 'Send Now';
+    }
+  }
+
+  // Poll /status every 3 seconds
+  function poll() {
+    fetch('/status')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        setStatus(data.running, data.message || '');
+        if (data.running) setTimeout(poll, 3000);
+        else if (initialRunning) { initialRunning = false; setTimeout(poll, 3000); }
+      })
+      .catch(function() { setTimeout(poll, 5000); });
+  }
+
+  // Start polling immediately
+  poll();
+</script>
+</body>
+</html>

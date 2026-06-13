@@ -1,0 +1,5 @@
+flask
+python-dotenv
+pandas==2.3.0
+yagmail==0.15.293
+dnspython==2.7.0

@@ -1,0 +1,6 @@
+{
+  "test_contacts": [
+    {"email": "test1@gmail.com", "name": "Test Recruiter One", "company": "Test Company A"},
+    {"email": "test2@gmail.com", "name": "Test Recruiter Two", "company": "Test Company B"}
+  ]
+}
