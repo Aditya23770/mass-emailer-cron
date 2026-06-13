@@ -1,18 +1,17 @@
-﻿# Cold Email Automation Tool
+﻿# Mass Emailer — Cold Email Automation Tool
 
-A Flask web app that automates sending personalized cold emails for job applications. Manages your contact list, rotates email templates, attaches your resume, and tracks who has already been contacted.
+A Flask web app that sends personalized cold emails for job applications. Manages your contact list, rotates templates, attaches your resume, and tracks who has already been contacted.
 
 ---
 
 ## Features
 
-- Multiple personalized email templates (rotated automatically)
-- CSV-based contact management with duplicate prevention
+- Multiple email templates rotated automatically per contact
+- CSV-based contact list with duplicate-send prevention
 - PDF resume attached to every email
 - Configurable delay between sends to avoid spam filters
-- Web UI to trigger sends, set test mode, and monitor status
-- Real-time logs viewable at `/logs`
-- WSGI-ready for deployment on PythonAnywhere
+- Web UI to trigger sends, monitor status, and view logs
+- WSGI-ready for free hosting on PythonAnywhere
 
 ---
 
@@ -20,47 +19,36 @@ A Flask web app that automates sending personalized cold emails for job applicat
 
 ```
 mass_emailer_cron/
-â”œâ”€â”€ app.py                  # Flask web app (main entry point)
-â”œâ”€â”€ send_emails.py          # Email sending engine
-â”œâ”€â”€ scheduled_task.py       # Background job runner
-â”œâ”€â”€ wsgi.py                 # WSGI config for production deployment
-â”œâ”€â”€ requirements.txt        # Python dependencies
-â”œâ”€â”€ .env.example            # Template for your .env file (copy and fill)
-â”œâ”€â”€ config.example.json     # Template for config.json (copy and fill)
-â”œâ”€â”€ contacts_example.csv    # Demo contacts file (copy to filtered_contacts.csv)
-â”œâ”€â”€ example_resume.pdf      # Demo PDF resume (replace with yours)
-â”œâ”€â”€ template_1.txt          # Email template 1
-â”œâ”€â”€ template_2.txt          # Email template 2
-â”œâ”€â”€ template_3.txt          # Email template 3
-â”œâ”€â”€ templates/
-â”‚   â””â”€â”€ form.html           # Web UI HTML form
-â””â”€â”€ .gitignore              # Excludes sensitive files from git
+├── app.py                  # Flask web app (main entry point)
+├── send_emails.py          # Email sending engine
+├── scheduled_task.py       # Background job runner
+├── wsgi.py                 # WSGI config for PythonAnywhere
+├── requirements.txt        # Python dependencies
+├── .env.example            # Copy this to .env and fill in your values
+├── config.example.json     # Copy this to config.json and fill in your values
+├── contacts_example.csv    # Demo contacts — copy to filtered_contacts.csv
+├── example_resume.pdf      # Demo resume PDF — replace with yours
+├── template_1.txt          # Email template 1
+├── template_2.txt          # Email template 2
+├── template_3.txt          # Email template 3
+└── templates/form.html     # Web UI
 ```
 
 ---
 
 ## Local Setup
 
-### 1. Clone the repo
-
 ```bash
-git clone https://github.com/YOUR_USERNAME/mass_emailer_cron.git
+git clone https://github.com/Aditya23770/mass-emailer-cron.git
 cd mass_emailer_cron
-```
-
-### 2. Install dependencies
-
-```bash
 pip install -r requirements.txt
+cp .env.example .env                            # fill in your Gmail + sender details
+cp config.example.json config.json
+cp contacts_example.csv filtered_contacts.csv  # replace with real contacts
+python app.py                                   # open http://localhost:5000
 ```
 
-### 3. Configure your environment
-
-```bash
-cp .env.example .env
-```
-
-Open `.env` and fill in your values:
+Open `.env` and fill in:
 
 ```
 GMAIL_ADDRESS=your_gmail@gmail.com
@@ -72,186 +60,130 @@ SENDER_GITHUB=github.com/YourUsername
 RESUME_PATH=example_resume.pdf
 ```
 
-### 4. Configure the app
-
-```bash
-cp config.example.json config.json
-```
-
-Edit `config.json` if needed (change subjects, add test contacts, etc.).
-
-### 5. Add your contacts
-
-```bash
-cp contacts_example.csv filtered_contacts.csv
-```
-
-Replace the sample rows with your real contacts. Format: `Name,Email,Company`
-
-### 6. Add your resume
-
-Replace `example_resume.pdf` with your actual resume PDF, then update `RESUME_PATH` in `.env`.
-
-### 7. Run the app
-
-```bash
-python app.py
-```
-
-Open your browser at `http://localhost:5000`
-
 ---
 
 ## Gmail App Password Setup
 
-> **Why not just use your normal Gmail password?**
->
-> Your normal Gmail password is what you type when logging into Gmail in a browser. Google blocks external apps from using it directly for security reasons.
->
-> An **App Password** is a special 16-character password that Google generates **just for this app**. It lets the tool send emails on your behalf without knowing your real password. If compromised, you can revoke it instantly without changing your main password.
+> **Why not use your normal Gmail password?**
+> Google blocks external apps from using your real password. An **App Password** is a special 16-character token Google generates just for this app — it lets the tool send emails on your behalf without exposing your real password. You can revoke it anytime without changing your main password.
 
-**Steps to create a Gmail App Password:**
+**Steps:**
 
-1. Go to [myaccount.google.com](https://myaccount.google.com)
-2. Click **Security** in the left sidebar
-3. Under "How you sign in to Google", enable **2-Step Verification** (required)
-4. Go back to **Security** â†’ scroll down â†’ click **App passwords**
-   *(If you don't see this option, 2FA is not enabled yet)*
-5. Under "Select app" choose **Mail**
-6. Under "Select device" choose **Other (Custom name)** â†’ type `mass_emailer_cron`
-7. Click **Generate**
-8. Copy the 16-character password shown (e.g. `abcd efgh ijkl mnop`)
-9. Paste it into your `.env` file as `GMAIL_APP_PASSWORD`
+1. Go to [myaccount.google.com](https://myaccount.google.com) → **Security**
+2. Enable **2-Step Verification** (required first)
+3. Go back to Security → **App passwords**
+4. App name: type `mass-emailer` → click **Generate**
+5. Copy the 16-character password shown (e.g. `abcd efgh ijkl mnop`)
+6. Paste it into `.env` as `GMAIL_APP_PASSWORD`
 
-> Keep this password secret â€” treat it like a password. Anyone with it can send emails from your Gmail account.
+> Keep this secret — anyone with it can send emails from your Gmail account.
 
 ---
 
-## Customizing Email Templates
+## Email Templates
 
-Edit `template_1.txt`, `template_2.txt`, `template_3.txt` to match your background and tone.
-
-**Available placeholders:**
+Edit `template_1.txt`, `template_2.txt`, `template_3.txt` to match your background. The tool cycles through them in order so each contact gets a slightly different email.
 
 | Placeholder | Replaced with |
 |---|---|
-| `{name}` | Recipient's name from CSV |
-| `{company}` | Company name from CSV |
-| `{sender_name}` | Your name from `.env` |
-| `{sender_phone}` | Your phone from `.env` |
-| `{sender_linkedin}` | Your LinkedIn from `.env` |
-| `{sender_github}` | Your GitHub from `.env` |
-
-The tool cycles through templates in order (template 1 â†’ 2 â†’ 3 â†’ 1 ...) so each contact gets a slightly different email.
+| `{name}` | Recipient's name |
+| `{company}` | Company name |
+| `{sender_name}` | Your name (from `.env`) |
+| `{sender_phone}` | Your phone (from `.env`) |
+| `{sender_linkedin}` | Your LinkedIn (from `.env`) |
+| `{sender_github}` | Your GitHub (from `.env`) |
 
 ---
 
 ## How to Get HR / Recruiter Contacts
 
-Your contacts CSV needs three columns: `Name`, `Email`, `Company`.
+Your `filtered_contacts.csv` needs three columns: `Name`, `Email`, `Company`.
 
-**Where to find recruiter emails:**
+**Recommended sourcing tools:**
 
-- **[Topmate.io](https://topmate.io)** â€” Book 1:1s with hiring managers and recruiters; get direct contact details
-- **[Apollo.io](https://apollo.io)** â€” Search by job title + company; free tier includes limited exports
-- **[Hunter.io](https://hunter.io)** â€” Find verified work email addresses by company domain
-- **LinkedIn** â€” Connect first, then message for email; some profiles show email directly
+### 1. Topmate.io
 
-> *(Add your own sourcing tool links below this line)*
-> <!-- INSERT YOUR PRODUCT LINKS HERE -->
+[Topmate.io](https://topmate.io) is a platform where industry professionals sell curated recruiter and HR contact lists. These products come with verified emails across industries — download the list, map the columns to `Name`, `Email`, `Company`, and it's ready to drop straight into this tool.
 
-**Important:** Only email people who may reasonably expect outreach (recruiters, HR, hiring managers). Respect anti-spam laws â€” include your contact info and never mislead recipients about who you are.
+- **[HR Email List & Outreach Guide — Suryakant Chaurasiya](https://topmate.io/suryakant_chaurasiya/1187680)**
+  Curated HR and recruiter emails across tech companies, packaged with a cold email outreach strategy. Covers multiple industries and roles (Data Science, SDE, Product). Compatible with this tool's CSV schema out of the box.
 
----
+- **[Recruiter Contacts & Job Search Strategy — Narendra Barihan](https://topmate.io/narendra_barihan/2032869)**
+  Verified recruiter contact list with job search guidance. Includes contacts from startups to large enterprises. Download, rename columns to `Name`, `Email`, `Company`, and you're ready to send.
 
-## Deploying on PythonAnywhere (Free Hosting)
+### 2. Other Sources
 
-PythonAnywhere offers a **free tier** that can host this Flask app permanently. No credit card required.
+| Platform | How to use it |
+|---|---|
+| [Apollo.io](https://apollo.io) | Search by job title + company, export as CSV |
+| [Hunter.io](https://hunter.io) | Find verified work emails by company domain |
+| LinkedIn | Connect first, then message for email |
 
-### Step 1 â€” Create a PythonAnywhere Account
-
-1. Go to [pythonanywhere.com](https://www.pythonanywhere.com)
-2. Click **Pricing & signup** â†’ **Create a Beginner account** (free)
-3. Fill in username, email, password â†’ Sign up
-4. Verify your email address
-
-> [SCREENSHOT: PythonAnywhere signup page]
+> Only email recruiters and hiring managers. Include your contact info in every email and never mislead recipients about who you are (CAN-SPAM / GDPR).
 
 ---
 
-### Step 2 â€” Upload Your Code
+## Deploying on PythonAnywhere (Free)
 
-**Option A â€” Git clone (recommended):**
-
-1. From the PythonAnywhere dashboard, click **Consoles** in the top menu
-2. Click **Bash** to open a new Bash console
-3. Run:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/mass_emailer_cron.git
-   ```
-4. Your code is now at `/home/YOUR_USERNAME/mass_emailer_cron/`
-
-> [SCREENSHOT: PythonAnywhere Bash console with git clone command]
-
-**Option B â€” Manual upload:**
-
-1. Click **Files** in the top menu
-2. Navigate to your home directory
-3. Click **Upload a file** and upload each project file
+PythonAnywhere hosts Flask apps permanently for free — no credit card needed.
 
 ---
 
-### Step 3 â€” Create a Virtual Environment
+### Step 1 — Sign Up
 
-In the Bash console, run these commands one by one:
+Go to [pythonanywhere.com](https://www.pythonanywhere.com) → **Pricing & signup** → **Create a Beginner account** → verify your email.
+
+---
+
+### Step 2 — Dashboard & Open a Bash Console
+
+After logging in you land on the Dashboard. Under **New console**, click **$ Bash**.
+
+![PythonAnywhere Dashboard](screenshots/01_dashboard.png)
+> *Your screen will show your own username instead of "Aditya23770"*
+
+---
+
+### Step 3 — Clone the Repo & Install Dependencies
+
+In the Bash console, run these one by one:
 
 ```bash
 mkvirtualenv myenv --python=python3.10
 workon myenv
+git clone https://github.com/Aditya23770/mass-emailer-cron.git mass_emailer_cron
 pip install -r mass_emailer_cron/requirements.txt
 ```
 
-> Wait for all packages to install. This may take 1â€“2 minutes.
+---
 
-> [SCREENSHOT: Virtual environment creation in Bash console]
+### Step 4 — Upload Your Config, Contacts & Resume via Files Tab
+
+Click **Files** in the top nav. Navigate into `mass_emailer_cron/` and upload:
+- Your `config.json` (copy of `config.example.json` with your values)
+- Your `filtered_contacts.csv`
+- Your resume PDF
+
+![PythonAnywhere Files Tab](screenshots/02_files.png)
+> *Your project folder appears under Directories after cloning. Click into it to upload files.*
 
 ---
 
-### Step 4 â€” Create the Web App
+### Step 5 — Create the Web App
 
-1. Click **Web** in the top menu
-2. Click **Add a new web app** button
-3. Click **Next**
-4. Choose **Manual configuration** (NOT "Flask" â€” we configure it ourselves)
-5. Select **Python 3.10** â†’ click **Next**
-6. Your web app is created. You'll land on the Web app configuration page.
-
-> [SCREENSHOT: Web tab â†’ Add new web app â†’ Manual configuration]
+1. Click **Web** in the top nav → **Add a new web app**
+2. Click **Next** → choose **Manual configuration** *(NOT Flask)* → **Python 3.10** → **Next**
 
 ---
 
-### Step 5 â€” Configure the Virtualenv
+### Step 6 — Edit the WSGI File
 
-On the Web app configuration page:
+Go to the **Web** tab → click your web app → scroll down to the **Code** section. You'll see it exactly as shown below:
 
-1. Scroll down to the **Virtualenv** section
-2. Click the text box and enter:
-   ```
-   /home/YOUR_USERNAME/.virtualenvs/myenv
-   ```
-   *(Replace `YOUR_USERNAME` with your actual PythonAnywhere username)*
-3. Click the checkmark / tick to save
+![PythonAnywhere WSGI Config](screenshots/03_wsgi_config.png)
+> *Web tab → your app → Code section. Click the WSGI configuration file link to open the editor.*
 
-> [SCREENSHOT: Virtualenv section filled in]
-
----
-
-### Step 6 â€” Edit the WSGI File
-
-1. On the Web app configuration page, find **WSGI configuration file**
-2. Click the link (it looks like `/var/www/YOUR_USERNAME_pythonanywhere_com_wsgi.py`)
-3. The file editor opens â€” **delete all the existing content**
-4. Paste in the following:
+In the editor: **select all → delete everything** → paste this:
 
 ```python
 import sys
@@ -265,80 +197,67 @@ load_dotenv('/home/YOUR_USERNAME/mass_emailer_cron/.env')
 from app import app as application
 ```
 
-*(Replace `YOUR_USERNAME` with your actual username)*
-
-5. Click **Save** (top right of the editor)
-
-> [SCREENSHOT: WSGI file editor with the above code]
+Replace `YOUR_USERNAME` with your actual PythonAnywhere username. Click **Save**.
 
 ---
 
-### Step 7 â€” Set Environment Variables
+### Step 7 — Set Virtualenv Path
 
-1. Go back to the **Web** tab
-2. Scroll down to the **Environment variables** section
-3. Add each variable from your `.env` file:
+Back on the Web tab, scroll to the **Virtualenv** section and enter:
 
-   | Variable | Value |
-   |---|---|
-   | `GMAIL_ADDRESS` | your_gmail@gmail.com |
-   | `GMAIL_APP_PASSWORD` | xxxx xxxx xxxx xxxx |
-   | `SENDER_NAME` | Your Full Name |
-   | `SENDER_PHONE` | +91-XXXXXXXXXX |
-   | `SENDER_LINKEDIN` | linkedin.com/in/your-profile |
-   | `SENDER_GITHUB` | github.com/YourUsername |
-   | `RESUME_PATH` | /home/YOUR_USERNAME/mass_emailer_cron/example_resume.pdf |
-
-4. Click **Save** after adding all variables
-
-> [SCREENSHOT: Environment variables section filled in]
-
----
-
-### Step 8 â€” Create Your Config File
-
-In the Bash console:
-
-```bash
-cd mass_emailer_cron
-cp config.example.json config.json
+```
+/home/YOUR_USERNAME/.virtualenvs/myenv
 ```
 
-Edit `config.json` to add your test contacts if desired.
+Click the checkmark to save.
 
 ---
 
-### Step 9 â€” Upload Your Contacts and Resume
+### Step 8 — Set Environment Variables
 
-In the Bash console, or via the **Files** tab:
+On the Web tab, scroll to **Environment variables** and add each one:
 
-- Upload your `filtered_contacts.csv` (your actual contact list)
-- Upload your real resume PDF and note the path (e.g. `/home/YOUR_USERNAME/mass_emailer_cron/MyResume.pdf`)
-- Update `RESUME_PATH` in the environment variables section to point to it
-
----
-
-### Step 10 â€” Reload and Test
-
-1. On the **Web** tab, click the big green **Reload** button
-2. Visit your app at: `https://YOUR_USERNAME.pythonanywhere.com`
-3. You should see the email form UI
-4. Use **Test Mode** to send a test email to yourself first
-
-> [SCREENSHOT: Web app running at pythonanywhere.com URL]
-
-> **Troubleshooting:** If the app shows an error, click the **error log** link on the Web tab to see what went wrong.
+| Variable | Value |
+|---|---|
+| `GMAIL_ADDRESS` | your_gmail@gmail.com |
+| `GMAIL_APP_PASSWORD` | xxxx xxxx xxxx xxxx |
+| `SENDER_NAME` | Your Full Name |
+| `SENDER_PHONE` | +91-XXXXXXXXXX |
+| `SENDER_LINKEDIN` | linkedin.com/in/your-profile |
+| `SENDER_GITHUB` | github.com/YourUsername |
+| `RESUME_PATH` | /home/YOUR_USERNAME/mass_emailer_cron/MyResume.pdf |
 
 ---
 
-## GitHub Repository Setup
+### Step 9 — Reload & Test
 
-See the `setup.md` file in your local project directory for step-by-step instructions on creating a GitHub repo and pushing this code.
+Click the green **Reload** button on the Web tab. Then visit:
 
-*(That file is intentionally excluded from git so your personal push steps stay local.)*
+```
+https://YOUR_USERNAME.pythonanywhere.com
+```
+
+Use **Test Mode** first to send a test email to yourself before running a full batch.
+
+---
+
+### Debugging — Log Files
+
+If something goes wrong, the **Web tab** has a **Log files** section (scroll down past the Code and Virtualenv sections). It shows three clickable log links:
+
+![PythonAnywhere Log Files](screenshots/04_log_files.png)
+> *Web tab → scroll down to "Log files". This is the first place to check when something breaks.*
+
+| Log | What it tells you |
+|---|---|
+| **Error log** | Python exceptions and import errors — check this first |
+| **Server log** | WSGI startup messages and crashes |
+| **Access log** | Every HTTP request made to your app |
+
+Click the **Error log** link — it opens directly in the browser and shows the exact line that failed.
 
 ---
 
 ## License
 
-MIT â€” free to use, modify, and share.
+MIT — free to use, modify, and share.
