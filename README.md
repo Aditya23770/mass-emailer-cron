@@ -1,4 +1,4 @@
-# Cold Email Automation Tool
+﻿# Cold Email Automation Tool
 
 A Flask web app that automates sending personalized cold emails for job applications. Manages your contact list, rotates email templates, attaches your resume, and tracks who has already been contacted.
 
@@ -19,22 +19,22 @@ A Flask web app that automates sending personalized cold emails for job applicat
 ## Project Structure
 
 ```
-cold-email-tool/
-├── app.py                  # Flask web app (main entry point)
-├── send_emails.py          # Email sending engine
-├── scheduled_task.py       # Background job runner
-├── wsgi.py                 # WSGI config for production deployment
-├── requirements.txt        # Python dependencies
-├── .env.example            # Template for your .env file (copy and fill)
-├── config.example.json     # Template for config.json (copy and fill)
-├── contacts_example.csv    # Demo contacts file (copy to filtered_contacts.csv)
-├── example_resume.pdf      # Demo PDF resume (replace with yours)
-├── template_1.txt          # Email template 1
-├── template_2.txt          # Email template 2
-├── template_3.txt          # Email template 3
-├── templates/
-│   └── form.html           # Web UI HTML form
-└── .gitignore              # Excludes sensitive files from git
+mass_emailer_cron/
+â”œâ”€â”€ app.py                  # Flask web app (main entry point)
+â”œâ”€â”€ send_emails.py          # Email sending engine
+â”œâ”€â”€ scheduled_task.py       # Background job runner
+â”œâ”€â”€ wsgi.py                 # WSGI config for production deployment
+â”œâ”€â”€ requirements.txt        # Python dependencies
+â”œâ”€â”€ .env.example            # Template for your .env file (copy and fill)
+â”œâ”€â”€ config.example.json     # Template for config.json (copy and fill)
+â”œâ”€â”€ contacts_example.csv    # Demo contacts file (copy to filtered_contacts.csv)
+â”œâ”€â”€ example_resume.pdf      # Demo PDF resume (replace with yours)
+â”œâ”€â”€ template_1.txt          # Email template 1
+â”œâ”€â”€ template_2.txt          # Email template 2
+â”œâ”€â”€ template_3.txt          # Email template 3
+â”œâ”€â”€ templates/
+â”‚   â””â”€â”€ form.html           # Web UI HTML form
+â””â”€â”€ .gitignore              # Excludes sensitive files from git
 ```
 
 ---
@@ -44,8 +44,8 @@ cold-email-tool/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cold-email-tool.git
-cd cold-email-tool
+git clone https://github.com/YOUR_USERNAME/mass_emailer_cron.git
+cd mass_emailer_cron
 ```
 
 ### 2. Install dependencies
@@ -115,15 +115,15 @@ Open your browser at `http://localhost:5000`
 1. Go to [myaccount.google.com](https://myaccount.google.com)
 2. Click **Security** in the left sidebar
 3. Under "How you sign in to Google", enable **2-Step Verification** (required)
-4. Go back to **Security** → scroll down → click **App passwords**
+4. Go back to **Security** â†’ scroll down â†’ click **App passwords**
    *(If you don't see this option, 2FA is not enabled yet)*
 5. Under "Select app" choose **Mail**
-6. Under "Select device" choose **Other (Custom name)** → type `cold-email-tool`
+6. Under "Select device" choose **Other (Custom name)** â†’ type `mass_emailer_cron`
 7. Click **Generate**
 8. Copy the 16-character password shown (e.g. `abcd efgh ijkl mnop`)
 9. Paste it into your `.env` file as `GMAIL_APP_PASSWORD`
 
-> Keep this password secret — treat it like a password. Anyone with it can send emails from your Gmail account.
+> Keep this password secret â€” treat it like a password. Anyone with it can send emails from your Gmail account.
 
 ---
 
@@ -142,7 +142,7 @@ Edit `template_1.txt`, `template_2.txt`, `template_3.txt` to match your backgrou
 | `{sender_linkedin}` | Your LinkedIn from `.env` |
 | `{sender_github}` | Your GitHub from `.env` |
 
-The tool cycles through templates in order (template 1 → 2 → 3 → 1 ...) so each contact gets a slightly different email.
+The tool cycles through templates in order (template 1 â†’ 2 â†’ 3 â†’ 1 ...) so each contact gets a slightly different email.
 
 ---
 
@@ -152,15 +152,15 @@ Your contacts CSV needs three columns: `Name`, `Email`, `Company`.
 
 **Where to find recruiter emails:**
 
-- **[Topmate.io](https://topmate.io)** — Book 1:1s with hiring managers and recruiters; get direct contact details
-- **[Apollo.io](https://apollo.io)** — Search by job title + company; free tier includes limited exports
-- **[Hunter.io](https://hunter.io)** — Find verified work email addresses by company domain
-- **LinkedIn** — Connect first, then message for email; some profiles show email directly
+- **[Topmate.io](https://topmate.io)** â€” Book 1:1s with hiring managers and recruiters; get direct contact details
+- **[Apollo.io](https://apollo.io)** â€” Search by job title + company; free tier includes limited exports
+- **[Hunter.io](https://hunter.io)** â€” Find verified work email addresses by company domain
+- **LinkedIn** â€” Connect first, then message for email; some profiles show email directly
 
 > *(Add your own sourcing tool links below this line)*
 > <!-- INSERT YOUR PRODUCT LINKS HERE -->
 
-**Important:** Only email people who may reasonably expect outreach (recruiters, HR, hiring managers). Respect anti-spam laws — include your contact info and never mislead recipients about who you are.
+**Important:** Only email people who may reasonably expect outreach (recruiters, HR, hiring managers). Respect anti-spam laws â€” include your contact info and never mislead recipients about who you are.
 
 ---
 
@@ -168,32 +168,32 @@ Your contacts CSV needs three columns: `Name`, `Email`, `Company`.
 
 PythonAnywhere offers a **free tier** that can host this Flask app permanently. No credit card required.
 
-### Step 1 — Create a PythonAnywhere Account
+### Step 1 â€” Create a PythonAnywhere Account
 
 1. Go to [pythonanywhere.com](https://www.pythonanywhere.com)
-2. Click **Pricing & signup** → **Create a Beginner account** (free)
-3. Fill in username, email, password → Sign up
+2. Click **Pricing & signup** â†’ **Create a Beginner account** (free)
+3. Fill in username, email, password â†’ Sign up
 4. Verify your email address
 
 > [SCREENSHOT: PythonAnywhere signup page]
 
 ---
 
-### Step 2 — Upload Your Code
+### Step 2 â€” Upload Your Code
 
-**Option A — Git clone (recommended):**
+**Option A â€” Git clone (recommended):**
 
 1. From the PythonAnywhere dashboard, click **Consoles** in the top menu
 2. Click **Bash** to open a new Bash console
 3. Run:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/cold-email-tool.git
+   git clone https://github.com/YOUR_USERNAME/mass_emailer_cron.git
    ```
-4. Your code is now at `/home/YOUR_USERNAME/cold-email-tool/`
+4. Your code is now at `/home/YOUR_USERNAME/mass_emailer_cron/`
 
 > [SCREENSHOT: PythonAnywhere Bash console with git clone command]
 
-**Option B — Manual upload:**
+**Option B â€” Manual upload:**
 
 1. Click **Files** in the top menu
 2. Navigate to your home directory
@@ -201,36 +201,36 @@ PythonAnywhere offers a **free tier** that can host this Flask app permanently. 
 
 ---
 
-### Step 3 — Create a Virtual Environment
+### Step 3 â€” Create a Virtual Environment
 
 In the Bash console, run these commands one by one:
 
 ```bash
 mkvirtualenv myenv --python=python3.10
 workon myenv
-pip install -r cold-email-tool/requirements.txt
+pip install -r mass_emailer_cron/requirements.txt
 ```
 
-> Wait for all packages to install. This may take 1–2 minutes.
+> Wait for all packages to install. This may take 1â€“2 minutes.
 
 > [SCREENSHOT: Virtual environment creation in Bash console]
 
 ---
 
-### Step 4 — Create the Web App
+### Step 4 â€” Create the Web App
 
 1. Click **Web** in the top menu
 2. Click **Add a new web app** button
 3. Click **Next**
-4. Choose **Manual configuration** (NOT "Flask" — we configure it ourselves)
-5. Select **Python 3.10** → click **Next**
+4. Choose **Manual configuration** (NOT "Flask" â€” we configure it ourselves)
+5. Select **Python 3.10** â†’ click **Next**
 6. Your web app is created. You'll land on the Web app configuration page.
 
-> [SCREENSHOT: Web tab → Add new web app → Manual configuration]
+> [SCREENSHOT: Web tab â†’ Add new web app â†’ Manual configuration]
 
 ---
 
-### Step 5 — Configure the Virtualenv
+### Step 5 â€” Configure the Virtualenv
 
 On the Web app configuration page:
 
@@ -246,21 +246,21 @@ On the Web app configuration page:
 
 ---
 
-### Step 6 — Edit the WSGI File
+### Step 6 â€” Edit the WSGI File
 
 1. On the Web app configuration page, find **WSGI configuration file**
 2. Click the link (it looks like `/var/www/YOUR_USERNAME_pythonanywhere_com_wsgi.py`)
-3. The file editor opens — **delete all the existing content**
+3. The file editor opens â€” **delete all the existing content**
 4. Paste in the following:
 
 ```python
 import sys
 import os
 
-sys.path.insert(0, '/home/YOUR_USERNAME/cold-email-tool')
+sys.path.insert(0, '/home/YOUR_USERNAME/mass_emailer_cron')
 
 from dotenv import load_dotenv
-load_dotenv('/home/YOUR_USERNAME/cold-email-tool/.env')
+load_dotenv('/home/YOUR_USERNAME/mass_emailer_cron/.env')
 
 from app import app as application
 ```
@@ -273,7 +273,7 @@ from app import app as application
 
 ---
 
-### Step 7 — Set Environment Variables
+### Step 7 â€” Set Environment Variables
 
 1. Go back to the **Web** tab
 2. Scroll down to the **Environment variables** section
@@ -287,7 +287,7 @@ from app import app as application
    | `SENDER_PHONE` | +91-XXXXXXXXXX |
    | `SENDER_LINKEDIN` | linkedin.com/in/your-profile |
    | `SENDER_GITHUB` | github.com/YourUsername |
-   | `RESUME_PATH` | /home/YOUR_USERNAME/cold-email-tool/example_resume.pdf |
+   | `RESUME_PATH` | /home/YOUR_USERNAME/mass_emailer_cron/example_resume.pdf |
 
 4. Click **Save** after adding all variables
 
@@ -295,12 +295,12 @@ from app import app as application
 
 ---
 
-### Step 8 — Create Your Config File
+### Step 8 â€” Create Your Config File
 
 In the Bash console:
 
 ```bash
-cd cold-email-tool
+cd mass_emailer_cron
 cp config.example.json config.json
 ```
 
@@ -308,17 +308,17 @@ Edit `config.json` to add your test contacts if desired.
 
 ---
 
-### Step 9 — Upload Your Contacts and Resume
+### Step 9 â€” Upload Your Contacts and Resume
 
 In the Bash console, or via the **Files** tab:
 
 - Upload your `filtered_contacts.csv` (your actual contact list)
-- Upload your real resume PDF and note the path (e.g. `/home/YOUR_USERNAME/cold-email-tool/MyResume.pdf`)
+- Upload your real resume PDF and note the path (e.g. `/home/YOUR_USERNAME/mass_emailer_cron/MyResume.pdf`)
 - Update `RESUME_PATH` in the environment variables section to point to it
 
 ---
 
-### Step 10 — Reload and Test
+### Step 10 â€” Reload and Test
 
 1. On the **Web** tab, click the big green **Reload** button
 2. Visit your app at: `https://YOUR_USERNAME.pythonanywhere.com`
@@ -341,4 +341,4 @@ See the `setup.md` file in your local project directory for step-by-step instruc
 
 ## License
 
-MIT — free to use, modify, and share.
+MIT â€” free to use, modify, and share.
